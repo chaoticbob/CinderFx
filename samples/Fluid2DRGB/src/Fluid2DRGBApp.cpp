@@ -192,7 +192,7 @@ void Fluid2DRGBApp::draw()
 	}
 	gl::draw( mTex, getWindowBounds() );
 	
-	mParams.draw();
+//	mParams.draw();
 }
 
 CINDER_APP_NATIVE( Fluid2DRGBApp, RendererGl )
