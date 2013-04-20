@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="CinderFluid"
+	id="org.libcinder.cinderfluid"
+	author="Hai Nguyen"
+	summary="Realtime 2D fluid simulator."
+	>
+	<supports os="msw" />
+	<supports os="macosx" />
+	<includePath>src</includePath>
+	<source>src/cinderfx/Fluid2D.cpp</source>
+	<header>src/cinderfx/Clamp.h</header>
+	<header>src/cinderfx/Fluid2D.h</header>
+	<header>src/cinderfx/Grid.h</header>
+</block>
+<template>templates/Basic GL/template.xml</template>
+</cinder>

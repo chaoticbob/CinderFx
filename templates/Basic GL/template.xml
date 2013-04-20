@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<template name="CinderFluid: Basic GL" parent="org.libcinder.apptemplates.basicopengl">
+	<requires>org.libcinder.cinderfluid</requires>
+	<supports os="macosx" />
+	<supports os="msw" />	
+	<source replaceContents="true" replaceName="true">src/_TBOX_PREFIX_App.cpp</source>
+</template>
+</cinder>
