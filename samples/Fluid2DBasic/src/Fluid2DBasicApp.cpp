@@ -160,7 +160,7 @@ void Fluid2DBasicApp::draw()
 	gl::color( Color( 1, 1, 1 ) );
 	gl::draw( mTex, getWindowBounds() );
 
-	params::InterfaceGl::draw();
+	mParams.draw();
 }
 
 CINDER_APP_NATIVE( Fluid2DBasicApp, RendererGl )

@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		000F489B150E51AF00F62855 /* Fluids2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 000F4895150E51AF00F62855 /* Fluids2D.cpp */; };
 		000F48A0150E537000F62855 /* uv.png in Resources */ = {isa = PBXBuildFile; fileRef = 000F489F150E537000F62855 /* uv.png */; };
+		007827681723344400B47F9C /* Fluid2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007827661723344400B47F9C /* Fluid2D.cpp */; };
 		0091D8F90E81B9330029341E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0091D8F80E81B9330029341E /* OpenGL.framework */; };
 		0097E3E50F3E9819005A4392 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0097E3E40F3E9819005A4392 /* QuickTime.framework */; };
 		00B784B30FF439BC000DE1D7 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784AF0FF439BC000DE1D7 /* Accelerate.framework */; };
@@ -25,10 +25,10 @@
 
 /* Begin PBXFileReference section */
 		000F4894150E51AF00F62855 /* Clamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clamp.h; sourceTree = "<group>"; };
-		000F4895150E51AF00F62855 /* Fluids2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fluids2D.cpp; sourceTree = "<group>"; };
-		000F4896150E51AF00F62855 /* Fluids2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fluids2D.h; sourceTree = "<group>"; };
 		000F4899150E51AF00F62855 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		000F489F150E537000F62855 /* uv.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = uv.png; path = ../resources/uv.png; sourceTree = "<group>"; };
+		007827661723344400B47F9C /* Fluid2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fluid2D.cpp; sourceTree = "<group>"; };
+		007827671723344400B47F9C /* Fluid2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fluid2D.h; sourceTree = "<group>"; };
 		0091D8F80E81B9330029341E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		0097E3E40F3E9819005A4392 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
 		00B784AF0FF439BC000DE1D7 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -81,14 +81,14 @@
 		000F4892150E51AF00F62855 /* cinderfx */ = {
 			isa = PBXGroup;
 			children = (
+				007827661723344400B47F9C /* Fluid2D.cpp */,
+				007827671723344400B47F9C /* Fluid2D.h */,
 				000F4894150E51AF00F62855 /* Clamp.h */,
-				000F4895150E51AF00F62855 /* Fluids2D.cpp */,
-				000F4896150E51AF00F62855 /* Fluids2D.h */,
 				000F4899150E51AF00F62855 /* Grid.h */,
 			);
 			name = cinderfx;
 			path = ../../../src/cinderfx;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
@@ -233,7 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00BAE65A0E7ED9C10018A608 /* Fluid2DTextureApp.cpp in Sources */,
-				000F489B150E51AF00F62855 /* Fluids2D.cpp in Sources */,
+				007827681723344400B47F9C /* Fluid2D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +243,8 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -255,11 +257,13 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
 					"-lcurl",
 				);
 				PRODUCT_NAME = Fluid2DTexture;
+				SDKROOT = macosx;
 				SYMROOT = ./build;
 				WRAPPER_EXTENSION = app;
 			};
@@ -268,6 +272,8 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_FAST_MATH = YES;
@@ -281,11 +287,13 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
 					"-lcurl",
 				);
 				PRODUCT_NAME = Fluid2DTexture;
+				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = ./build;
 				WRAPPER_EXTENSION = app;

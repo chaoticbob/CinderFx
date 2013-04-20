@@ -216,7 +216,7 @@ void Fluid2DTextureApp::draw()
 	gl::draw( mTriMesh ); 
 	mTex.unbind();
 	
-	params::InterfaceGl::draw();	
+	mParams.draw();	
 }
 
 CINDER_APP_NATIVE( Fluid2DTextureApp, RendererGl )

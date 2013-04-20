@@ -221,7 +221,7 @@ void Fluid2DParticlesApp::draw()
 	gl::draw( mTex, getWindowBounds() );
 	mTex.unbind();
 	mParticles.draw();
-	params::InterfaceGl::draw();
+	mParams.draw();
 }
 
 CINDER_APP_NATIVE( Fluid2DParticlesApp, RendererGl )

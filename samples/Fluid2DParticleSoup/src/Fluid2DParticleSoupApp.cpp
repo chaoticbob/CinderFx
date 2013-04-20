@@ -191,7 +191,7 @@ void Fluid2DParticleSoupApp::draw()
 	*/
 
 	mParticleSoup.draw();
-	params::InterfaceGl::draw();	
+	mParams.draw();	
 }
 
 CINDER_APP_NATIVE( Fluid2DParticleSoupApp, RendererGl )

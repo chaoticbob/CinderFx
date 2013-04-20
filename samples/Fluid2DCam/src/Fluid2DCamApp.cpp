@@ -345,7 +345,7 @@ void Fluid2DCamAppApp::draw()
 		glVertex2f( Vec2f( 3*kDrawScale*mFluid2DResX, 0 ) );
 		glVertex2f( Vec2f( 3*kDrawScale*mFluid2DResX, (float)getWindowHeight() ) );
 	glEnd();
-	params::InterfaceGl::draw();
+	mParams.draw();
 }
 
 CINDER_APP_NATIVE( Fluid2DCamAppApp, RendererGl )
