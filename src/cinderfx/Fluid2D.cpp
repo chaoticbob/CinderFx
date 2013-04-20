@@ -1187,7 +1187,11 @@ void Fluid2D::resetTexCoords()
 void Fluid2D::beginSimStepParams( bool& aFtzOff, bool& aDazOff )
 {
 #if defined( CINDER_MSW )
+  #if _MSC_VER < 1700
 	aFtzOff = ( _MM_FLUSH_ZERO_OFF == _MM_GET_FLUSH_ZERO_MODE( _MM_FLUSH_ZERO_MASK ) );
+  #else
+	aFtzOff = ( _MM_FLUSH_ZERO_OFF == _MM_GET_FLUSH_ZERO_MODE() );
+  #endif
 	aDazOff = ( _MM_DENORMALS_ZERO_OFF == _MM_GET_DENORMALS_ZERO_MODE() );
 	_MM_SET_FLUSH_ZERO_MODE( _MM_FLUSH_ZERO_ON );
 	_MM_SET_DENORMALS_ZERO_MODE( _MM_DENORMALS_ZERO_ON );
