@@ -2,5 +2,4 @@ CinderFx
 
 Fluid2D - 2D Grid Fluid Simulation on CPU
 
-For use with Cinder 0.8.5
-
+For use with Cinder 0.8.5. This is a CinderBlock, so all you need to do is check it out into your blocks directory.
