@@ -22,6 +22,12 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "cinder/Channel.h"
 #include "cinder/CinderMath.h"
 #include "cinder/Surface.h"
+
+#include "glm/detail/type_vec2.hpp"
+
+template<typename T>
+using tvec2 = glm::detail::tvec2<T, glm::highp>;
+
 using namespace ci;
 
 #if defined( CINDER_MSW ) || defined( CINDER_MAC )
@@ -55,7 +61,7 @@ void Advect2D
 	RealT						aDissipation, 
 	RealT						aDt, 
 	const Grid2D<T>&			aSrc, 
-	const Grid2D<Vec2<RealT> >&	aVel, 
+	const Grid2D<tvec2<RealT> >&	aVel,
 	Grid2D<T>&					aDst,
 	int							aBorder = 1
 )
@@ -76,7 +82,7 @@ void Advect2D
 	for( int j = jStart; j < jEnd; ++j ) {
 		for( int i = iStart; i < iEnd; ++i ) {
 			// Velocity
-			const Vec2<RealT>& vel = aVel.at( i, j );
+			const tvec2<RealT>& vel = aVel.at( i, j );
 
 			// Previous
 			RealT dx = aDt*vel.x;
@@ -110,7 +116,7 @@ void AdvectAndDiffuse2D
 	RealT						aVisc,
 	RealT						aDt, 
 	const Grid2D<T>&			aSrc, 
-	const Grid2D<Vec2<RealT> >&	aVel, 
+	const Grid2D<tvec2<RealT> >&	aVel,
 	Grid2D<T>&					aDst,
 	int							aBorder = 1
 )
@@ -136,7 +142,7 @@ void AdvectAndDiffuse2D
 	for( int j = jStart; j < jEnd; ++j ) {
 		for( int i = iStart; i < iEnd; ++i ) {
 			// Velocity
-			const Vec2<RealT>& vel = aVel.at( i, j );
+			const tvec2<RealT>& vel = aVel.at( i, j );
 
 			// Previous
 			RealT dx = aDt*vel.x;
@@ -311,10 +317,10 @@ template <typename T>
 void SetVelocityBoundary2D
 (
 	int					aBoundaryType,
-	Grid2D<Vec2<T> >&	inOutVel
+	Grid2D<tvec2<T> >&	inOutVel
 )
 {
-	typedef typename Vec2<T>::value_type RealT;
+	typedef typename tvec2<T>::value_type RealT;
 
 	if( inOutVel.empty() ) {
 		return;
@@ -328,10 +334,10 @@ void SetVelocityBoundary2D
 		int x0 = 1;
 		int x1 = m - 1;
 		for( int j = 0; j < inOutVel.resY(); ++j ) {
-			const Vec2<T>& v0 = inOutVel.at( x0, j );
-			const Vec2<T>& v1 = inOutVel.at( x1, j );
-			inOutVel.at( 0, j ) = Vec2<T>( s*v0.x, v0.y );
-			inOutVel.at( m, j ) = Vec2<T>( s*v1.x, v1.y );
+			const tvec2<T>& v0 = inOutVel.at( x0, j );
+			const tvec2<T>& v1 = inOutVel.at( x1, j );
+			inOutVel.at( 0, j ) = tvec2<T>( s*v0.x, v0.y );
+			inOutVel.at( m, j ) = tvec2<T>( s*v1.x, v1.y );
 		}
 
 		// Y Boundaries
@@ -339,10 +345,10 @@ void SetVelocityBoundary2D
 		int y0 = 1;
 		int y1 = n - 1;
 		for( int i = 0; i < inOutVel.resX(); ++i ) {
-			const Vec2<T>& v0 = inOutVel.at( i, y0 );
-			const Vec2<T>& v1 = inOutVel.at( i, y1 );
-			inOutVel.at( i, 0 ) = Vec2<T>( v0.x, s*v0.y );
-			inOutVel.at( i, n ) = Vec2<T>( v1.x, s*v1.y );
+			const tvec2<T>& v0 = inOutVel.at( i, y0 );
+			const tvec2<T>& v1 = inOutVel.at( i, y1 );
+			inOutVel.at( i, 0 ) = tvec2<T>( v0.x, s*v0.y );
+			inOutVel.at( i, n ) = tvec2<T>( v1.x, s*v1.y );
 		}
 
 		// Corners
@@ -480,11 +486,11 @@ void Buoyancy2D(
 	RealT					aAmbTmp,		// Ambient temperature
 	RealT					aSigma,			// Buoyancy constant
 	RealT					aKappa,			// Density weight
-	const Vec2<RealT>&		aGravityDir,	// Gravity direction
+	const tvec2<RealT>&		aGravityDir,	// Gravity direction
 	RealT					aDt,			// Time step
 	const Grid2D<RealT>&	aTmp,			// Temperature grid
 	const Grid2D<RealT>&	aDen,			// Density grid
-	Grid2D<Vec2<RealT> >&	outVel			// out: Velocity grid
+	Grid2D<tvec2<RealT> >&	outVel			// out: Velocity grid
 )
 {
 	// Range
@@ -495,7 +501,7 @@ void Buoyancy2D(
 	int jEnd   = aTmp.resY() - border;
 
 	// Calculate buoyancy
-	Vec2<RealT> forceDir = -aGravityDir;
+	tvec2<RealT> forceDir = -aGravityDir;
 	for( int j = jStart; j < jEnd; ++j ) {
 		for( int i = iStart; i < iEnd; ++i ) {
 			RealT curTmp = aTmp.at( i, j );
@@ -517,7 +523,7 @@ void ComputeDivergence2D
 ( 
 	RealT						aHalfDivCellSizeX, 
 	RealT						aHalfDivCellSizeY, 
-	const Grid2D<Vec2<RealT> >&	aVel, 
+	const Grid2D<tvec2<RealT> >&	aVel,
 	Grid2D<RealT>&				outDiv 
 )
 {
@@ -586,7 +592,7 @@ void SubtractGradient2D
 	RealT					aHalfDivCellSizeX, 
 	RealT					aHalfDivCellSizeY, 
 	const Grid2D<RealT>&	aPressure, 
-	Grid2D<Vec2<RealT> >&	outVel 
+	Grid2D<tvec2<RealT> >&	outVel
 )
 {
 	// Range
@@ -601,7 +607,7 @@ void SubtractGradient2D
 		for( int i = iStart; i < iEnd; ++i ) {
 			RealT diffX = aPressure.at( i + 1, j ) - aPressure.at( i - 1, j );
 			RealT diffY = aPressure.at( i, j + 1 ) - aPressure.at( i, j - 1 );
-			outVel.at( i, j ) -= Vec2<RealT>( aHalfDivCellSizeX*diffX, aHalfDivCellSizeY*diffY );
+			outVel.at( i, j ) -= tvec2<RealT>( aHalfDivCellSizeX*diffX, aHalfDivCellSizeY*diffY );
 		}
 	}
 }
@@ -611,7 +617,7 @@ void SubtractGradient2D
  *
  */
 template <typename RealT>
-RealT Curl2D( int i, int j, const Grid2D<Vec2<RealT> >& aVel )
+RealT Curl2D( int i, int j, const Grid2D<tvec2<RealT> >& aVel )
 {
 	RealT dudy = aVel.at( i, j + 1 ).x - aVel.at( i, j - 1).x;
 	RealT dvdx = aVel.at( i + 1, j ).y - aVel.at( i - 1, j).y;
@@ -624,7 +630,7 @@ RealT Curl2D( int i, int j, const Grid2D<Vec2<RealT> >& aVel )
  */
 template <typename RealT>
 void CalculateCurlField2D( 
-	const Grid2D<Vec2<RealT> >&	inVel, 
+	const Grid2D<tvec2<RealT> >&	inVel,
 	Grid2D<RealT>&				outCurl,
 	Grid2D<RealT>&				outCurlLength
 )
@@ -653,10 +659,10 @@ void CalculateCurlField2D(
 template <typename RealT>
 void VorticityConfinement2D( 
 	RealT						aVorticityScale,
-	const Grid2D<Vec2<RealT> >&	inVel, 
+	const Grid2D<tvec2<RealT> >&	inVel,
 	const Grid2D<RealT>&		inCurl,
 	const Grid2D<RealT>&		inCurlLength,
-	Grid2D<Vec2<RealT> >&		outVel 
+	Grid2D<tvec2<RealT> >&		outVel
 )
 {
 	// Range
@@ -679,7 +685,7 @@ void VorticityConfinement2D(
 			dwdx *= length;
 			dwdy *= length;
 			RealT v = inCurlLength.at( i, j );
-			outVel.at( i, j ) = inVel.at( i, j ) + aVorticityScale*Vec2<RealT>( dwdy*-v, dwdx*v );
+			outVel.at( i, j ) = inVel.at( i, j ) + aVorticityScale*tvec2<RealT>( dwdy*-v, dwdx*v );
 		}
 	}
 }
@@ -803,7 +809,7 @@ void Fluid2D::initDefaultVars()
 	mMaxColor			= Colorf( 1.0f, 1.0f, 1.0f );
 	mBuoyancyScale		= 2.00f;
 	mVorticityScale		= 0.25f;
-	mGravityDir			= Vec2f( 0, 1 );
+	mGravityDir			= vec2( 0, 1 );
 
 	mEnableDen	= true;
 	mEnableTex	= false;
@@ -820,7 +826,7 @@ void Fluid2D::initSimVars()
 
 void Fluid2D::set( int aResX, int aResY, const Rectf& aBounds )
 {
-	mRes = Vec2i( aResX, aResY );
+	mRes = ivec2( aResX, aResY );
 	mBounds = aBounds;
 
 	mCellSize.x = mBounds.getWidth()  / (float)mRes.x;
@@ -878,7 +884,7 @@ void Fluid2D::setBoundaryType( BoundaryType val )
 	mBoundaryType = validBound ? val : Fluid2D::BOUNDARY_TYPE_NONE;
 }
 
-void Fluid2D::addVelocity( int aX, int aY, const Vec2f& aVal )
+void Fluid2D::addVelocity( int aX, int aY, const vec2& aVal )
 {
 	const int kBorder = 1;
 	if( mVel0 && mVel0->contains( aX, aY, kBorder ) ) {
@@ -886,7 +892,7 @@ void Fluid2D::addVelocity( int aX, int aY, const Vec2f& aVal )
 	}	
 }
 
-void Fluid2D::splatVelocity( float aX, float aY, const Vec2f& aVal )
+void Fluid2D::splatVelocity( float aX, float aY, const vec2& aVal )
 {
 	const int kBorder = 1;
 	if( mVel0 ) {
@@ -932,14 +938,14 @@ void Fluid2D::clearDensity()
 	}
 }
 
-void Fluid2D::addTexCoord( int aX, int aY, const Vec2f& aVal )
+void Fluid2D::addTexCoord( int aX, int aY, const vec2& aVal )
 {
 	if( mTex0 && mTex0->contains( aX, aY ) ) {
 		mTex0->at( aX, aY ) = aVal;
 	}	
 }
 
-void Fluid2D::splatTexCoord( float aX, float aY, const Vec2f& aVal )
+void Fluid2D::splatTexCoord( float aX, float aY, const vec2& aVal )
 {
 	if( mTex0 ) {
 		mTex0->splat( aX, aY, aVal );
@@ -1020,7 +1026,7 @@ void Fluid2D::stepCombined()
 	// TexCoords
 	if( mEnableTex ) {
 		Advect2D( mTexDissipation, mDt, *mTex0, *mVel0, *mTex1 );
-		ClampGrid2D( *mTex1, Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 1.0f ) );
+		ClampGrid2D( *mTex1, vec2( 0.0f, 0.0f ), vec2( 1.0f, 1.0f ) );
 		SetCopyBoundary2D( *mTex1 );
 	}
 
@@ -1092,7 +1098,7 @@ void Fluid2D::stepStam()
 	// TexCoord
 	if( mEnableTex ) {
 		Advect2D( mTexDissipation, mDt, *mTex0, *mVel0, *mTex1 );
-		ClampGrid2D( *mTex1, Vec2f( 0.0f, 0.0f ), Vec2f( 1.0f, 1.0f ) );
+		ClampGrid2D( *mTex1, vec2( 0.0f, 0.0f ), vec2( 1.0f, 1.0f ) );
 		SetCopyBoundary2D( *mTex1 );
 	}
 
@@ -1155,18 +1161,19 @@ void Fluid2D::initSimData()
 	float dist = 0.15f*std::min( resX(), resY() );
 	float distSq = dist*dist;
 
-	Vec2f center = 0.5f*Vec2f( (float)resX(), (float)resY() );
+	vec2 center = 0.5f*vec2( (float)resX(), (float)resY() );
 	
 	VecGrid& velGrid = *mVel0;
 	RealGrid& denGrid = *mDen0;
 
 	for( int j = 0; j < resY(); ++j ) {
 		for( int i = 0; i < resX(); ++i ) {
-			Vec2f dv = Vec2f( (float)i, (float)j ) - center;
-			if( dv.lengthSquared() > distSq )
+			vec2 dv = vec2( (float)i, (float)j ) - center;
+			auto length = glm::length( dv );
+			if( length * length > distSq )
 				continue;
 
-			velGrid.at( i, j + (int)dist ) = Vec2f( 0.0f, -25.0f );
+			velGrid.at( i, j + (int)dist ) = vec2( 0.0f, -25.0f );
 			denGrid.at( i, j + (int)dist ) = 5.0f;
 		}
 	}
@@ -1178,8 +1185,8 @@ void Fluid2D::resetTexCoords()
 	float dy = 1.0f/(float)(mRes.y - 1);
 	for( int j = 0; j < mRes.y; ++j ) {
 		for( int i = 0; i < mRes.x; ++i ) {
-			mTex0->at( i, j ) = Vec2f( dx*i, dy*j );
-			mTex1->at( i, j ) = Vec2f( dx*i, dy*j );
+			mTex0->at( i, j ) = vec2( dx*i, dy*j );
+			mTex1->at( i, j ) = vec2( dx*i, dy*j );
 		}
 	}
 }

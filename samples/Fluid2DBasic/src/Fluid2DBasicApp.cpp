@@ -15,6 +15,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "cinder/gl/Texture.h"
 #include "cinder/Utilities.h"
 #include "cinder/params/Params.h"
+#include "cinder/app/RendererGl.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -38,9 +40,9 @@ public:
 private:
 	float					mVelScale;
 	float					mDenScale;
-	ci::Vec2f				mPrevPos;
+	ci::vec2				mPrevPos;
 	cinderfx::Fluid2D		mFluid2D;
-	ci::gl::Texture			mTex;
+	ci::gl::Texture2dRef	mTex;
 	params::InterfaceGl		mParams;
 };
 
@@ -62,7 +64,7 @@ void Fluid2DBasicApp::setup()
  	mFluid2D.setDensityDissipation( 0.99f );
 	mVelScale = 3.0f*std::max( mFluid2D.resX(), mFluid2D.resY() );
    	
-	mParams = params::InterfaceGl( "Params", Vec2i( 300, 400 ) );
+	mParams = params::InterfaceGl( "Params", ivec2( 300, 400 ) );
 	mParams.addParam( "Stam Step", mFluid2D.stamStepAddr() );
 	mParams.addSeparator();
 	mParams.addParam( "Velocity Input Scale", &mVelScale, "min=0 max=10000 step=1" );
@@ -110,7 +112,7 @@ void Fluid2DBasicApp::mouseDrag( MouseEvent event )
 	float y = (event.getY()/(float)getWindowHeight())*mFluid2D.resY();	
 	
 	if( event.isLeftDown() ) {
-		Vec2f dv = event.getPos() - mPrevPos;
+		vec2 dv = vec2( event.getPos() ) - mPrevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		mFluid2D.splatDensity( x, y, mDenScale );
 	}
@@ -126,11 +128,11 @@ void Fluid2DBasicApp::touchesMoved( TouchEvent event )
 {
 	const std::vector<TouchEvent::Touch>& touches = event.getTouches();
 	for( std::vector<TouchEvent::Touch>::const_iterator cit = touches.begin(); cit != touches.end(); ++cit ) {
-		Vec2f prevPos = cit->getPrevPos();
-		Vec2f pos = cit->getPos();
+		vec2 prevPos = cit->getPrevPos();
+		vec2 pos = cit->getPos();
 		float x = (pos.x/(float)getWindowWidth())*mFluid2D.resX();
 		float y = (pos.y/(float)getWindowHeight())*mFluid2D.resY();	
-		Vec2f dv = pos - prevPos;
+		vec2 dv = pos - prevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		mFluid2D.splatDensity( x, y, mDenScale );
 	}
@@ -153,9 +155,9 @@ void Fluid2DBasicApp::draw()
 	Channel32f chan( mFluid2D.resX(), mFluid2D.resY(), mFluid2D.resX()*sizeof(float), 1, const_cast<float*>( mFluid2D.density().data() ) );
 
 	if( ! mTex ) {
-		mTex = gl::Texture( chan );
+		mTex = gl::Texture::create( chan );
 	} else {
-		mTex.update( chan );
+		mTex->update( chan );
 	}
 	gl::color( Color( 1, 1, 1 ) );
 	gl::draw( mTex, getWindowBounds() );

@@ -30,7 +30,7 @@ const int   kMaxParticles   = 50000;
 
 void Particle::update( float dt )
 {
-	Vec2f vel = mPos - mPrevPos;
+	vec2 vel = mPos - mPrevPos;
 	mPos += vel*kSimDt;
 	mPos += mAccel*kSimDt2;
 	mAccel *= kDampen;
@@ -87,7 +87,7 @@ void ParticleSystem::update()
 		else {
 			float x = part.pos().x*dx + 2.0f;
 			float y = part.pos().y*dy + 2.0f;
-			Vec2f vel = mFluid->velocity().bilinearSampleChecked( x, y, Vec2f( 0.0f, 0.0f ) );
+			vec2 vel = mFluid->velocity().bilinearSampleChecked( x, y, vec2( 0.0f, 0.0f ) );
 			part.addForce( vel );
 			part.update( dt );
 		}
@@ -123,7 +123,7 @@ void ParticleSystem::draw()
 		colors[ i * 4 + 2 ] = color.b;
 		colors[ i * 4 + 3 ] = color.a;
 		
-		Vec2f pos = part.pos();
+		vec2 pos = part.pos();
 		vertices[ i * 2 + 0 ] = pos.x;
 		vertices[ i * 2 + 1 ] = pos.y;
 		
@@ -141,7 +141,7 @@ void ParticleSystem::draw()
 	glDisableClientState( GL_COLOR_ARRAY );
 
 #else
-	glBegin( GL_POINTS );
+	gl::begin( GL_POINTS );
 	for( int i = 0; i < numParticles(); ++i ) {
 		const Particle& part = mParticles.at( i );
 		if( ! part.alive() )
@@ -149,9 +149,9 @@ void ParticleSystem::draw()
 		float alpha = part.age()*part.invLife();
 		alpha = 1.0f - std::min( alpha, 1.0f );
 		alpha = std::min( alpha, 0.8f );
-		glColor4f( ColorAf( part.color(), alpha ) );
-		glVertex2f( part.pos() );
+		gl::color( ColorAf( part.color(), alpha ) );
+		gl::vertex( part.pos() );
 	}
-	glEnd();
+	gl::end();
 #endif
 }

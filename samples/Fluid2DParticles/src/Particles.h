@@ -18,7 +18,7 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "cinder/Vector.h"
 using ci::Colorf;
 using ci::Rectf;
-using ci::Vec2f;
+using ci::vec2;
 //
 #include "cinderfx/Fluid2D.h"
 using cinderfx::Fluid2D;
@@ -33,14 +33,14 @@ public:
 	Particle() 
 		: mAge( 0 ), mLife( 0 ) {}
 
-	Particle( const Vec2f& aPos, float aLife, const Colorf& aColor ) 
+	Particle( const vec2& aPos, float aLife, const Colorf& aColor ) 
 		: mPos( aPos ), mPrevPos( aPos ), mAccel( 0, 0 ), mAge( 0 ), mLife( aLife ), mInvLife( 1.0f/aLife ), mColor( aColor ) {}
 
-	Vec2f&			pos() { return mPos; }
-	const Vec2f&	pos() const { return mPos; }
-	void			setPos( const Vec2f& aPos ) { mPos = aPos; mPrevPos = aPos; }
-	void			addForce( const Vec2f& aForce ) { mAccel += aForce; }
-	void			clearForce() { mAccel = Vec2f( 0, 0 ); }
+	vec2&			pos() { return mPos; }
+	const vec2&	pos() const { return mPos; }
+	void			setPos( const vec2& aPos ) { mPos = aPos; mPrevPos = aPos; }
+	void			addForce( const vec2& aForce ) { mAccel += aForce; }
+	void			clearForce() { mAccel = vec2( 0, 0 ); }
 
 	float			age() const { return mAge; }
 	float			life() const { return mLife; }
@@ -53,7 +53,7 @@ public:
 	const Colorf&	color() const { return mColor; }
 	void			setColor( const Colorf& aColor ) { mColor = aColor; }
 
-	//void set( const Vec2f& aPos, float aLife, const Colorf& aColor ) {
+	//void set( const vec2& aPos, float aLife, const Colorf& aColor ) {
 	//	setPos( aPos );
 	//	clearForce();
 	//	setLife( aLife );
@@ -63,9 +63,9 @@ public:
 	void			update( float dt );
 
 private:
-	Vec2f		mPos;
-	Vec2f		mPrevPos;
-	Vec2f		mAccel;
+	vec2		mPos;
+	vec2		mPrevPos;
+	vec2		mAccel;
 
 	float		mAge;
 	float		mLife;
