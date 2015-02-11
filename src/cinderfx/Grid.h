@@ -19,8 +19,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 namespace cinderfx {
 
-using ci::Vec2i;
-using ci::Vec3i;
+using ci::ivec2;
+using ci::ivec3;
 
 #if defined( CINDER_MSW ) || defined( CINDER_MAC )
 
@@ -63,7 +63,7 @@ public:
 		return mData.empty(); 
 	}
 
-	const Vec2i& res() const { 
+	const ivec2& res() const { 
 		return mRes; 
 	}
 
@@ -76,7 +76,7 @@ public:
 	}
 
 	void setRes( int aResX, int aResY ) {
-		mRes = Vec2i( aResX, aResY );
+		mRes = ivec2( aResX, aResY );
 		int n = mRes.x*mRes.y;
 		mData.resize( n );
 	}
@@ -214,7 +214,7 @@ public:
 	}
 
 protected:
-	Vec2i				mRes;
+	ivec2				mRes;
 	std::vector<DataT>	mData;
 };
 

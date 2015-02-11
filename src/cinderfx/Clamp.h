@@ -11,6 +11,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 #pragma once
 
+#include "glm/detail/type_vec2.hpp"
+
 namespace cinderfx {
 
 /**
@@ -29,13 +31,13 @@ T Clamp( const T& x, const T& a = (T)0, const T& b = (T)1 )
  *
  */
 template <typename T>
-Vec2<T> Clamp( 
-	const Vec2<T>& v, 
-	const Vec2<T>& a = Vec2<T>( 0, 0 ), 
-	const Vec2<T>& b = Vec2<T>( 1, 1 ) 
+glm::detail::tvec2<T, glm::highp> Clamp(
+	const glm::detail::tvec2<T, glm::highp>& v,
+	const glm::detail::tvec2<T, glm::highp>& a = glm::detail::tvec2<T, glm::highp>( 0, 0 ),
+	const glm::detail::tvec2<T, glm::highp>& b = glm::detail::tvec2<T, glm::highp>( 1, 1 )
 ) 
 {
-	return Vec2<T>(
+	return glm::detail::tvec2<T, glm::highp>(
 		Clamp( v.x, a.x, b.x ),
 		Clamp( v.y, a.y, b.y )
 	);

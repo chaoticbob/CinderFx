@@ -10,6 +10,7 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 */
 
 #include "cinder/app/AppNative.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Vbo.h"
@@ -17,6 +18,9 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "cinder/Rand.h"
 #include "cinder/TriMesh.h"
 #include "cinder/params/Params.h"
+
+#include "cinder/gl/VboMesh.h"
+#include "cinder/gl/Shader.h"
 
 #include "Resources.h"
 
@@ -38,10 +42,10 @@ public:
 private:
 	float						mVelScale;
 	float						mDenScale;
-	ci::Vec2f					mPrevPos;
+	ci::vec2					mPrevPos;
 	cinderfx::Fluid2D			mFluid2D;
-	ci::gl::Texture				mTex;
-	ci::TriMesh2d				mTriMesh;
+	ci::gl::Texture2dRef		mTex;
+	ci::TriMeshRef				mTriMesh;
 
 	ci::params::InterfaceGl		mParams;
 	float						mFrameRate;
@@ -62,11 +66,9 @@ void Fluid2DTextureApp::prepareSettings( Settings *settings )
 
 void Fluid2DTextureApp::setup()
 {
-	glEnable( GL_TEXTURE_2D );
-	
 	mFrameRate = 0.0f;
 
-	mTex = gl::Texture( loadImage( loadResource( RES_IMAGE ) ) );
+	mTex = gl::Texture::create( loadImage( loadResource( RES_IMAGE ) ) );
 
 	mFluid2D.enableTexCoord();
 	mFluid2D.setTexCoordViscosity( 1.0f );
@@ -77,7 +79,7 @@ void Fluid2DTextureApp::setup()
    	mFluid2D.setDensityDissipation( 0.99f );
 	mVelScale = 0.50f*std::max( mFluid2D.resX(), mFluid2D.resY() );
     
-	mParams = params::InterfaceGl( "Params", Vec2i( 300, 400 ) );
+	mParams = params::InterfaceGl( "Params", ivec2( 300, 400 ) );
 	mParams.addParam( "Stam Step", mFluid2D.stamStepAddr() );
 	mParams.addSeparator();
 	mParams.addParam( "Velocity Input Scale", &mVelScale, "min=0 max=10000 step=1" );
@@ -100,12 +102,14 @@ void Fluid2DTextureApp::setup()
 	mParams.addParam( "Enable Buoyancy", mFluid2D.enableBuoyancyAddr() );
 	mParams.addParam( "Buoyancy Scale", mFluid2D.buoyancyScaleAddr(), "min=0 max=100 step=0.001" );
 	mParams.addParam( "Vorticity Scale", mFluid2D.vorticityScaleAddr(), "min=0 max=1 step=0.001" );
+	
+	mTriMesh = ci::TriMesh::create( TriMesh::Format().positions(2).texCoords0(2) );
 
 	// Points and texture coordinates
 	for( int j = 0; j < mFluid2D.resY(); ++j ) {
 		for( int i = 0; i < mFluid2D.resX(); ++i ) {
-			mTriMesh.appendVertex( Vec2f( 0.0f, 0.0f ) );
-			mTriMesh.appendTexCoord( Vec2f( 0.0f, 0.0f ) );
+			mTriMesh->appendVertex( vec2( 0.0f, 0.0f ) );
+			mTriMesh->appendTexCoord0( vec2( 0.0f, 0.0f ) );
 		}
 	}
 	// Triangles
@@ -115,8 +119,8 @@ void Fluid2DTextureApp::setup()
 			int idx1 = (j + 1)*mFluid2D.resX() + (i + 0 );
 			int idx2 = (j + 1)*mFluid2D.resX() + (i + 1 );
 			int idx3 = (j + 0)*mFluid2D.resX() + (i + 1 );
-			mTriMesh.appendTriangle( idx0, idx1, idx2 );
-			mTriMesh.appendTriangle( idx0, idx2, idx3 );
+			mTriMesh->appendTriangle( idx0, idx1, idx2 );
+			mTriMesh->appendTriangle( idx0, idx2, idx3 );
 		}
 	}
 	
@@ -147,7 +151,7 @@ void Fluid2DTextureApp::mouseDrag( MouseEvent event )
 	float y = (event.getY()/(float)getWindowHeight())*mFluid2D.resY();	
 	
 	if( event.isLeftDown() ) {
-		Vec2f dv = event.getPos() - mPrevPos;
+		vec2 dv = vec2( event.getPos() ) - mPrevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		if( mFluid2D.isBuoyancyEnabled() ) {
 			mFluid2D.splatDensity( x, y, mDenScale );
@@ -165,11 +169,11 @@ void Fluid2DTextureApp::touchesMoved( TouchEvent event )
 {
 	const std::vector<TouchEvent::Touch>& touches = event.getTouches();
 	for( std::vector<TouchEvent::Touch>::const_iterator cit = touches.begin(); cit != touches.end(); ++cit ) {
-		Vec2f prevPos = cit->getPrevPos();
-		Vec2f pos = cit->getPos();
+		vec2 prevPos = cit->getPrevPos();
+		vec2 pos = cit->getPos();
 		float x = (pos.x/(float)getWindowWidth())*mFluid2D.resX();
 		float y = (pos.y/(float)getWindowHeight())*mFluid2D.resY();	
-		Vec2f dv = pos - prevPos;
+		vec2 dv = pos - prevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		if( mFluid2D.isBuoyancyEnabled() ) {
 			mFluid2D.splatDensity( x, y, mDenScale );
@@ -202,19 +206,20 @@ void Fluid2DTextureApp::draw()
 	
 	for( int j = 0; j < mFluid2D.resY(); ++j ) {
 		for( int i = 0; i < mFluid2D.resX(); ++i ) {
-			Vec2f P = Vec2f( i*dx, j*dy );
-			Vec2f uv = mFluid2D.texCoordAt( i, j );
+			vec2 P = vec2( i*dx, j*dy );
+			vec2 uv = mFluid2D.texCoordAt( i, j );
 
 			int idx = j*mFluid2D.resX() + i;
-			mTriMesh.getVertices()[idx] = P;
-			mTriMesh.getTexCoords()[idx] = uv;
+			mTriMesh->getPositions<2>()[idx] = P;
+			mTriMesh->getTexCoords0<2>()[idx] = uv;
 			
 		}
 	}
 
-	mTex.bind();
-	gl::draw( mTriMesh ); 
-	mTex.unbind();
+	mTex->bind();
+	gl::bindStockShader( gl::ShaderDef().color().texture() );
+	gl::draw( gl::VboMesh::create(*mTriMesh) );
+	mTex->unbind();
 	
 	mParams.draw();	
 }

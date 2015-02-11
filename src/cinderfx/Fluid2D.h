@@ -19,9 +19,9 @@ namespace cinderfx {
 
 using ci::Colorf;
 using ci::Rectf;
-using ci::Vec2;
-using ci::Vec2i;
-using ci::Vec2f;
+using ci::vec2;
+using ci::ivec2;
+using ci::vec2;
 
 template <typename T> struct ZeroSelector {
 	static T Value() { return (T)0; }
@@ -31,8 +31,8 @@ template <> struct ZeroSelector<Colorf> {
 	static Colorf Value() { return Colorf( 0.0f, 0.0f, 0.0f ); }
 };
 
-template <> struct ZeroSelector<Vec2f> {
-	static Vec2f Value() { return Vec2f( 0.0f, 0.0f ); }
+template <> struct ZeroSelector<vec2> {
+	static vec2 Value() { return vec2( 0.0f, 0.0f ); }
 };
 
 
@@ -43,7 +43,7 @@ template <> struct ZeroSelector<Vec2f> {
 class Fluid2D {
 public:
 	typedef float						RealT;
-	typedef Vec2f						VecT;
+	typedef vec2						VecT;
 	typedef Colorf						RgbT;
 	typedef Grid2D<RealT>				RealGrid;
 	typedef Grid2D<VecT>				VecGrid;
@@ -113,9 +113,9 @@ public:
 	float*				vorticityScaleAddr() { return &mVorticityScale; }
 	void				setVorticityScale( float val ) { mVorticityScale = val; }
 	// Gravity direction
-	const Vec2f&		gravityDir() const { return mGravityDir; }
-	Vec2f*				gravityDirAddr() { return &mGravityDir; }
-	void				setGravityDir( const Vec2f& val ) { mGravityDir = val; }
+	const vec2&		gravityDir() const { return mGravityDir; }
+	vec2*				gravityDirAddr() { return &mGravityDir; }
+	void				setGravityDir( const vec2& val ) { mGravityDir = val; }
 
 	// Density enable/disable
 	bool				isDensityEnabled() const { return mEnableDen; }
@@ -221,21 +221,21 @@ public:
 	void				resetTexCoords();
     
 private:
-	Vec2i					mRes;
+	ivec2					mRes;
 	Rectf					mBounds;
 
 	// Cell size is the bounds divided by the resolution, it's often
 	// referred to as (dx, dy):
 	// dx = (right - left)/res.x
 	// dy = (bottom - top)/res.y
-	Vec2f					mCellSize;
+	vec2					mCellSize;
 
 	// Half divide cell size is 0.5 divided by the cell size. Why half?
 	// If you look at the divergence equation:
 	//    (u[i+1,j] - u[i-1,j])/(2*dx) + (u[i,j+1] - u[i,j-1])/(2*dy)
 	// 1/(2*dx), 1/(2*dy) = 0.5/dx, 0.5/dy 
 	// Easy huh?
-	Vec2f					mHalfDivCellSize;
+	vec2					mHalfDivCellSize;
 
 	// Sim vars
 	float					mDt;
@@ -252,7 +252,7 @@ private:
 	float					mBuoyancyScale;
 	// Vorticity scale should be between [0,1]
 	float					mVorticityScale;
-	Vec2f					mGravityDir;
+	vec2					mGravityDir;
 
 	// Enable/disable flags
 	bool					mEnableDen;

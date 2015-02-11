@@ -26,10 +26,10 @@ const int kMaxParticles = 75000;
 #endif
 const float kPointSize = 2.25f;
 
-void Particle::reset( const Vec2f& aPos, float aLife, const Colorf& aColor )
+void Particle::reset( const vec2& aPos, float aLife, const Colorf& aColor )
 {
 	mPos = mPrevPos = aPos;
-	mAccel = Vec2f( 0, 0 );
+	mAccel = vec2( 0, 0 );
 	mLife = aLife;
 	mAge = 0;
 	mColor = aColor;
@@ -37,7 +37,7 @@ void Particle::reset( const Vec2f& aPos, float aLife, const Colorf& aColor )
 
 void Particle::update( float simDt, float ageDt )
 {
-	Vec2f vel = mPos - mPrevPos;
+	vec2 vel = mPos - mPrevPos;
 	mPos += vel*simDt;
 	mPos += mAccel*simDt*simDt;
 	mAccel *= kDampen;
@@ -52,7 +52,7 @@ void ParticleSoup::setup( Fluid2D* aFluid )
 	
 	Rectf bounds = ci::app::getWindowBounds();
 	for( int n = 0; n < kMaxParticles; ++n ) {
-		Vec2f P;
+		vec2 P;
 		P.x = Rand::randFloat( bounds.x1 + 5.0f, bounds.x2 - 5.0f );
 		P.y = Rand::randFloat( bounds.y1 + 5.0f, bounds.y2 - 5.0f );
 		float life = Rand::randFloat( 2.0f, 3.0f );
@@ -80,7 +80,7 @@ void ParticleSoup::update()
 	for( int i = 0; i < numParticles(); ++i ) {
 		Particle& part = mParticles.at( i );
 		if( part.pos().x < minX || part.pos().y < minY || part.pos().x >= maxX || part.pos().y >= maxY ) {
-			Vec2f P;
+			vec2 P;
 			P.x = Rand::randFloat( bounds.x1 + 5.0f, bounds.x2 - 5.0f );
 			P.y = Rand::randFloat( bounds.y1 + 5.0f, bounds.y2 - 5.0f );
 			float life = Rand::randFloat( 2.0f, 3.0f );
@@ -89,7 +89,7 @@ void ParticleSoup::update()
 
 		float x = part.pos().x*dx + 2.0f;
 		float y = part.pos().y*dy + 2.0f;
-		Vec2f vel = mFluid->velocity().bilinearSampleChecked( x, y, Vec2f( 0.0f, 0.0f ) );
+		vec2 vel = mFluid->velocity().bilinearSampleChecked( x, y, vec2( 0.0f, 0.0f ) );
 		part.addForce( vel );
 		part.update( mFluid->dt(), dt );
 	}
@@ -118,7 +118,7 @@ void ParticleSoup::draw()
 		colors[ i * 4 + 2 ] = color.b;
 		colors[ i * 4 + 3 ] = color.a;
 		
-		Vec2f pos = part.pos();
+		vec2 pos = part.pos();
 		vertices[ i * 2 + 0 ] = pos.x;
 		vertices[ i * 2 + 1 ] = pos.y;
 		
@@ -137,14 +137,14 @@ void ParticleSoup::draw()
 	
 #else
 	
-	glBegin( GL_POINTS );
+	gl::begin( GL_POINTS );
 	for( int i = 0; i < numParticles(); ++i ) {
 		const Particle& part = mParticles.at( i );
 		float alpha = std::min( part.age()/1.0f, 0.75f );
-		glColor4f( ColorAf( 1.0f, 0.4f, 0.1f, alpha ) );
-		glVertex2f( part.pos() );
+		gl::color( ColorAf( 1.0f, 0.4f, 0.1f, alpha ) );
+		gl::vertex( part.pos() );
 	}
-	glEnd();
+	gl::end();
 		
 #endif
 	

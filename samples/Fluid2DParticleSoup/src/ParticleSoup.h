@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "cinder/Vector.h"
 using ci::Colorf;
 using ci::Rectf;
-using ci::Vec2f;
+using ci::vec2;
 //
 #include "cinderfx/Fluid2D.h"
 using cinderfx::Fluid2D;
@@ -49,13 +49,13 @@ class Particle {
 public:
 
 	Particle() : mAccel( 0, 0 ) {}
-	Particle( const Vec2f& aPos, float aLife, const Colorf& aColor ) 
+	Particle( const vec2& aPos, float aLife, const Colorf& aColor ) 
 		: mPos( aPos ), mPrevPos( aPos ), mAccel( 0, 0 ), mLife( aLife ), mAge( 0 ), mColor( aColor ) {}
 
-	Vec2f&			pos() { return mPos; }
-	const Vec2f&	pos() const { return mPos; }
-	void			setPos( const Vec2f& aPos ) { mPos = aPos; mPrevPos = aPos; }
-	void			addForce( const Vec2f& aForce ) { mAccel += aForce; }
+	vec2&			pos() { return mPos; }
+	const vec2&	pos() const { return mPos; }
+	void			setPos( const vec2& aPos ) { mPos = aPos; mPrevPos = aPos; }
+	void			addForce( const vec2& aForce ) { mAccel += aForce; }
 
 	float			life() const { return mLife; }
 	float			age() const { return mAge; }
@@ -63,14 +63,14 @@ public:
 	const Colorf&	color() const { return mColor; }
 	void			setColor( const Colorf& aColor ) { mColor = aColor; }
 
-	void			reset( const Vec2f& aPos, float aLife, const Colorf& aColor );
+	void			reset( const vec2& aPos, float aLife, const Colorf& aColor );
 
 	void			update( float simDt, float ageDt );
 
 private:
-	Vec2f	mPos;
-	Vec2f	mPrevPos;
-	Vec2f	mAccel;
+	vec2	mPos;
+	vec2	mPrevPos;
+	vec2	mAccel;
 	float	mLife;
 	float	mAge;
 	Colorf	mColor;
@@ -83,7 +83,7 @@ private:
 class ParticleSoup {
 public:
 
-	ParticleSoup() : mColor( ci::hsvToRGB( ci::Vec3f( 0.0f, 1.0f, 1.0f ) ) ) {}
+	ParticleSoup() : mColor( ci::hsvToRGB( ci::vec3( 0.0f, 1.0f, 1.0f ) ) ) {}
 
 	int				numParticles() const { return (int)mParticles.size(); }
 	Particle&		at( int n ) { return *( mParticles.begin() + (size_t)n ); }
