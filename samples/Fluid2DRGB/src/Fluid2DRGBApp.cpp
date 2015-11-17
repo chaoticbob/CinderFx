@@ -88,6 +88,7 @@ void Fluid2DRGBApp::setup()
 	mParams.addParam( "Enable Buoyancy", mFluid2D.enableBuoyancyAddr() );
 	mParams.addParam( "Buoyancy Scale", mFluid2D.buoyancyScaleAddr(), "min=0 max=100 step=0.001" );
 	mParams.addParam( "Vorticity Scale", mFluid2D.vorticityScaleAddr(), "min=0 max=1 step=0.001" );
+    mParams.hide();
 }
 
 void Fluid2DRGBApp::keyDown( KeyEvent event )
@@ -192,7 +193,7 @@ void prepareSettings( Fluid2DRGBApp::Settings *settings )
 	settings->setWindowSize( 700, 700 );
    	settings->setResizable( false ); 
 	settings->setFrameRate( 1000 );
-	settings->setMultiTouchEnabled();
+	//settings->setMultiTouchEnabled();
 }
 
 CINDER_APP( Fluid2DRGBApp, RendererGl, prepareSettings )
