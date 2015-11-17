@@ -9,7 +9,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 */
 
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -21,9 +22,12 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 #include "Particles.h"
 
-class Fluid2DParticlesApp : public ci::app::AppNative {
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
+class Fluid2DParticlesApp : public App {
 public:
-	void prepareSettings( ci::app::AppNative::Settings *settings );
 	void setup();
 	void keyDown( ci::app::KeyEvent event );
 	void mouseDown( ci::app::MouseEvent event );	
@@ -47,20 +51,6 @@ private:
 	ci::Colorf					mColor;
 	std::map<int, ci::Colorf>	mTouchColors;	
 };
-
-using namespace ci;
-using namespace ci::app;
-using namespace cinderfx;
-using namespace std;
-
-void Fluid2DParticlesApp::prepareSettings( Settings *settings )
-{
-	settings->setWindowSize( 700, 700 );
-   	settings->setResizable( false ); 
-	settings->setResizable( false );     
-	settings->setFrameRate( 1000 );
-	settings->enableMultiTouch();
-}
 
 void Fluid2DParticlesApp::setup()
 {
@@ -225,4 +215,14 @@ void Fluid2DParticlesApp::draw()
 	mParams.draw();
 }
 
-CINDER_APP_NATIVE( Fluid2DParticlesApp, RendererGl )
+
+void prepareSettings( Fluid2DParticlesApp::Settings *settings )
+{
+	settings->setWindowSize( 700, 700 );
+   	settings->setResizable( false ); 
+	settings->setResizable( false );     
+	settings->setFrameRate( 1000 );
+	settings->setMultiTouchEnabled();
+}
+
+CINDER_APP( Fluid2DParticlesApp, RendererGl, prepareSettings )

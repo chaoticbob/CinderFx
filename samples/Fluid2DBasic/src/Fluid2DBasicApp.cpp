@@ -9,7 +9,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 */
 
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -24,9 +25,8 @@ using namespace std;
 #include "cinderfx/Fluid2D.h"
 using namespace cinderfx;
 
-class Fluid2DBasicApp : public ci::app::AppNative {
+class Fluid2DBasicApp : public App {
 public:
-	void prepareSettings( ci::app::AppNative::Settings *settings );
 	void setup();
 	void keyDown( ci::app::KeyEvent event );
 	void mouseDown( ci::app::MouseEvent event );	
@@ -45,14 +45,6 @@ private:
 	ci::gl::Texture2dRef	mTex;
 	params::InterfaceGl		mParams;
 };
-
-void Fluid2DBasicApp::prepareSettings( Settings *settings )
-{
-	settings->setWindowSize( 700, 700 );
-    settings->setResizable( false ); 
-	settings->setFrameRate( 1000 );
-	settings->enableMultiTouch();
-}
 
 void Fluid2DBasicApp::setup()
 {
@@ -110,7 +102,6 @@ void Fluid2DBasicApp::mouseDrag( MouseEvent event )
 {
 	float x = (event.getX()/(float)getWindowWidth())*mFluid2D.resX();
 	float y = (event.getY()/(float)getWindowHeight())*mFluid2D.resY();	
-	
 	if( event.isLeftDown() ) {
 		vec2 dv = vec2( event.getPos() ) - mPrevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
@@ -165,4 +156,12 @@ void Fluid2DBasicApp::draw()
 	mParams.draw();
 }
 
-CINDER_APP_NATIVE( Fluid2DBasicApp, RendererGl )
+void prepareSettings( Fluid2DBasicApp::Settings *settings )
+{
+	settings->setWindowSize( 700, 700 );
+    settings->setResizable( false ); 
+	settings->setFrameRate( 1000 );
+	settings->setMultiTouchEnabled();
+}
+
+CINDER_APP( Fluid2DBasicApp, RendererGl, prepareSettings )

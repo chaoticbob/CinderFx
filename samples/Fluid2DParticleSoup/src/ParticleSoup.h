@@ -83,7 +83,7 @@ private:
 class ParticleSoup {
 public:
 
-	ParticleSoup() : mColor( ci::hsvToRGB( ci::vec3( 0.0f, 1.0f, 1.0f ) ) ) {}
+	ParticleSoup() : mColor( ci::hsvToRgb( ci::vec3( 0.0f, 1.0f, 1.0f ) ) ) {}
 
 	int				numParticles() const { return (int)mParticles.size(); }
 	Particle&		at( int n ) { return *( mParticles.begin() + (size_t)n ); }

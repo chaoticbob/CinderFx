@@ -26,7 +26,7 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "glm/detail/type_vec2.hpp"
 
 template<typename T>
-using tvec2 = glm::detail::tvec2<T, glm::highp>;
+using tvec2 = glm::tvec2<T, glm::highp>;
 
 using namespace ci;
 

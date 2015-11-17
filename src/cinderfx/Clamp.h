@@ -31,13 +31,13 @@ T Clamp( const T& x, const T& a = (T)0, const T& b = (T)1 )
  *
  */
 template <typename T>
-glm::detail::tvec2<T, glm::highp> Clamp(
-	const glm::detail::tvec2<T, glm::highp>& v,
-	const glm::detail::tvec2<T, glm::highp>& a = glm::detail::tvec2<T, glm::highp>( 0, 0 ),
-	const glm::detail::tvec2<T, glm::highp>& b = glm::detail::tvec2<T, glm::highp>( 1, 1 )
+glm::tvec2<T, glm::highp> Clamp(
+	const glm::tvec2<T, glm::highp>& v,
+	const glm::tvec2<T, glm::highp>& a = glm::tvec2<T, glm::highp>( 0, 0 ),
+	const glm::tvec2<T, glm::highp>& b = glm::tvec2<T, glm::highp>( 1, 1 )
 ) 
 {
-	return glm::detail::tvec2<T, glm::highp>(
+	return glm::tvec2<T, glm::highp>(
 		Clamp( v.x, a.x, b.x ),
 		Clamp( v.y, a.y, b.y )
 	);

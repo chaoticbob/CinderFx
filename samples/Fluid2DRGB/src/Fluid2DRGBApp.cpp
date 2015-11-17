@@ -9,7 +9,8 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 */
 
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
@@ -19,9 +20,12 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 #include "cinderfx/Fluid2D.h"
 
-class Fluid2DRGBApp : public ci::app::AppNative {
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
+class Fluid2DRGBApp : public App {
 public:
-	void prepareSettings( ci::app::AppNative::Settings *settings );
 	void setup();
 	void keyDown( ci::app::KeyEvent event );
 	void mouseDown( ci::app::MouseEvent event );	
@@ -43,19 +47,6 @@ private:
 	ci::gl::Texture2dRef		mTex;
 	ci::params::InterfaceGl		mParams;
 };
-
-using namespace ci;
-using namespace ci::app;
-using namespace cinderfx;
-using namespace std;
-
-void Fluid2DRGBApp::prepareSettings( Settings *settings )
-{
-	settings->setWindowSize( 700, 700 );
-   	settings->setResizable( false ); 
-	settings->setFrameRate( 1000 );
-	settings->enableMultiTouch();
-}
 
 void Fluid2DRGBApp::setup()
 {
@@ -193,7 +184,15 @@ void Fluid2DRGBApp::draw()
 	}
 	gl::draw( mTex, getWindowBounds() );
 	
-//	mParams.draw();
+	mParams.draw();
 }
 
-CINDER_APP_NATIVE( Fluid2DRGBApp, RendererGl )
+void prepareSettings( Fluid2DRGBApp::Settings *settings )
+{
+	settings->setWindowSize( 700, 700 );
+   	settings->setResizable( false ); 
+	settings->setFrameRate( 1000 );
+	settings->setMultiTouchEnabled();
+}
+
+CINDER_APP( Fluid2DRGBApp, RendererGl, prepareSettings )
