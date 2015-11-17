@@ -1,31 +1,32 @@
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/GlslProg.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Utilities.h"
 
+#include "cinderfx/Fluid2D.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#include "cinderfx/Fluid2D.h"
-using namespace cinderfx;
-
-class _TBOX_PREFIX_App : public ci::app::AppNative {
+class _TBOX_PREFIX_App : public ci::app::App {
   public:
-	void prepareSettings( ci::app::AppNative::Settings *settings );
-	void setup();
-	void mouseDown( ci::app::MouseEvent event );	
-	void mouseDrag( ci::app::MouseEvent event );
-	void update();
-	void draw();
+	static void prepareSettings( Settings *settings );
+	
+	void setup() override;
+	void mouseDown( MouseEvent event ) override;
+	void mouseDrag( MouseEvent event ) override;
+	void update() override;
+	void draw() override;
 
   private:
 	float					mVelScale;
 	float					mDenScale;
-	ci::Vec2f				mPrevPos;
+	ci::ivec2				mPrevPos;
 	cinderfx::Fluid2D		mFluid2D;
-	ci::gl::Texture			mTex;
+	ci::gl::TextureRef		mTex;
 };
 
 void _TBOX_PREFIX_App::prepareSettings( Settings *settings )
@@ -37,13 +38,11 @@ void _TBOX_PREFIX_App::prepareSettings( Settings *settings )
 
 void _TBOX_PREFIX_App::setup()
 {
-	glEnable( GL_TEXTURE_2D );
-	
 	mDenScale = 25;    
 	
 	mFluid2D.set( 192, 192 );
  	mFluid2D.setDensityDissipation( 0.99f );
-	mVelScale = 3.0f*std::max( mFluid2D.resX(), mFluid2D.resY() );
+	mVelScale = 3 * std::max( mFluid2D.resX(), mFluid2D.resY() );
    	
 	mFluid2D.enableDensity();
 	mFluid2D.enableVorticityConfinement();
@@ -57,11 +56,11 @@ void _TBOX_PREFIX_App::mouseDown( MouseEvent event )
 
 void _TBOX_PREFIX_App::mouseDrag( MouseEvent event )
 {
-	float x = (event.getX()/(float)getWindowWidth())*mFluid2D.resX();
-	float y = (event.getY()/(float)getWindowHeight())*mFluid2D.resY();	
+	float x = (event.getX()/(float)getWindowWidth()) * mFluid2D.resX();
+	float y = (event.getY()/(float)getWindowHeight()) * mFluid2D.resY();
 	
 	if( event.isLeftDown() ) {
-		Vec2f dv = event.getPos() - mPrevPos;
+		vec2 dv = event.getPos() - mPrevPos;
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		mFluid2D.splatDensity( x, y, mDenScale );
 	}
@@ -76,18 +75,17 @@ void _TBOX_PREFIX_App::update()
 
 void _TBOX_PREFIX_App::draw()
 {
-	// clear out the window with black
-	gl::clear( Color( 0, 0, 0 ) ); 
+	gl::clear(); 
 
 	Channel32f chan( mFluid2D.resX(), mFluid2D.resY(), mFluid2D.resX()*sizeof(float), 1, const_cast<float*>( mFluid2D.density().data() ) );
-
 	if( ! mTex ) {
-		mTex = gl::Texture( chan );
-	} else {
-		mTex.update( chan );
+		mTex = gl::Texture::create( chan );
 	}
-	gl::color( Color( 1, 1, 1 ) );
+	else {
+		mTex->update( chan );
+	}
+
 	gl::draw( mTex, getWindowBounds() );
 }
 
-CINDER_APP_NATIVE( _TBOX_PREFIX_App, RendererGl )
+CINDER_APP( _TBOX_PREFIX_App, app::RendererGl, _TBOX_PREFIX_App::prepareSettings )
