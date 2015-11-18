@@ -14,6 +14,7 @@ http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
 #include "cinderfx/Grid.h"
+#include <algorithm>
 
 namespace cinderfx {
 
