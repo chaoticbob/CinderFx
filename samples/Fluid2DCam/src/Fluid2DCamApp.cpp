@@ -33,11 +33,11 @@ public:
 	void draw();
 
 private:
-	ci::Capture					mCapture;
-	ci::Surface8u				mFlipped;
-	ci::gl::Texture				mTexCam;
+	ci::CaptureRef				mCapture;
+	ci::Surface8uRef			mFlipped;
+	ci::gl::TextureRef			mTexCam;
 
-	ci::Surface8u				mPrvScaled, mCurScaled;
+	ci::Surface8uRef			mPrvScaled, mCurScaled;
 	cv::Mat						mPrvCvData, mCurCvData;
 	cv::Mat						mFlow;
 	float						mVelThreshold;
@@ -103,22 +103,22 @@ void Fluid2DCamAppApp::setup()
 	mFluid2D.initSimData();
 	
 	// Create these so we can create the textures ahead of time
-	mSurfVel0		= Surface32fRef(mFluid2DResX, mFluid2DResY, false, SurfaceChannelOrder::RGB);
-	mSurfVel1		= Surface32fRef(mFluid2DResX, mFluid2DResY, false, SurfaceChannelOrder::RGB);
-	mChanDen0		= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mChanDen1		= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mChanDiv		= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mChanPrs		= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mChanCurl		= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mChanCurlLen	= Channel32fRef(mFluid2DResX, mFluid2DResY);
-	mTexVel0		= gl::TextureRef(mSurfVel0);
-	mTexVel1		= gl::TextureRef(mSurfVel1);
-	mTexDen0		= gl::TextureRef(mChanDen0);
-	mTexDen1		= gl::TextureRef(mChanDen1);
-	mTexDiv			= gl::TextureRef(mChanDiv);
-	mTexPrs			= gl::TextureRef(mChanPrs);
-	mTexCurl		= gl::TextureRef(mChanCurl);
-	mTexCurlLen		= gl::TextureRef(mChanCurlLen);
+	mSurfVel0		= Surface32f::create(mFluid2DResX, mFluid2DResY, false, SurfaceChannelOrder::RGB);
+	mSurfVel1		= Surface32f::create(mFluid2DResX, mFluid2DResY, false, SurfaceChannelOrder::RGB);
+	mChanDen0		= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mChanDen1		= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mChanDiv		= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mChanPrs		= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mChanCurl		= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mChanCurlLen	= Channel32f::create(mFluid2DResX, mFluid2DResY);
+	mTexVel0		= gl::Texture::create(*mSurfVel0);
+	mTexVel1		= gl::Texture::create(*mSurfVel1);
+	mTexDen0		= gl::Texture::create(*mChanDen0);
+	mTexDen1		= gl::Texture::create(*mChanDen1);
+	mTexDiv			= gl::Texture::create(*mChanDiv);
+	mTexPrs			= gl::Texture::create(*mChanPrs);
+	mTexCurl		= gl::Texture::create(*mChanCurl);
+	mTexCurlLen		= gl::Texture::create(*mChanCurlLen);
 	
 	mParams = params::InterfaceGl( "Params", ivec2( 300, 400 ) );
 	mParams.addParam( "Stam Step", mFluid2D.stamStepAddr() );
@@ -146,8 +146,8 @@ void Fluid2DCamAppApp::setup()
 	
 	// Camera
 	try {
-		mCapture = Capture( 640, 480 );
-		mCapture.start();
+		mCapture = Capture::create( 640, 480 );
+		mCapture->start();
 	}
 	catch( ... ) {
 		console() << "Failed to initialize capture" << std::endl;
@@ -165,7 +165,7 @@ void Fluid2DCamAppApp::mouseDrag( MouseEvent event )
 	float y = (event.getY()/(float)getWindowHeight())*mFluid2D.resY();	
 	
 	if( event.isLeftDown() ) {
-		vec2 dv = event.getPos() - mPrevPos;
+		vec2 dv = vec2(event.getPos().x - mPrevPos.x, event.getPos().y - mPrevPos.y);
 		mFluid2D.splatVelocity( x, y, mVelScale*dv );
 		mFluid2D.splatDensity( x, y, mDenScale );
 	}
@@ -176,22 +176,22 @@ void Fluid2DCamAppApp::mouseDrag( MouseEvent event )
 void Fluid2DCamAppApp::update()
 {
 	
-	if( mCapture && mCapture.checkNewFrame() ) {
+	if (mCapture && mCapture->checkNewFrame()) {
 		if( ! mTexCam ) {
-			mTexCam = gl::Texture( mCapture.getSurface() );
+			mTexCam = gl::Texture::create(mCapture->getSurface());
 		}
 
 		// Flip the image
 		if( ! mFlipped ) {
-			Surface8u srcImg = mCapture.getSurface();
-			mFlipped = Surface8u( srcImg.getWidth(), srcImg.getHeight(), srcImg.hasAlpha(), srcImg.getChannelOrder() );
+			Surface8uRef srcImg = mCapture->getSurface();
+			mFlipped = Surface8u::create(srcImg->getWidth(), srcImg->getHeight(), srcImg->hasAlpha(), srcImg->getChannelOrder());
 		}
-		Surface8u srcImg = mCapture.getSurface();
+		Surface8u srcImg = mCapture->getSurface();
 		mFlipped = Surface8u( srcImg.getWidth(), srcImg.getHeight(), srcImg.hasAlpha(), srcImg.getChannelOrder() );
-		for( int y = 0; y < mCapture.getHeight(); ++y ) {
+		for (int y = 0; y < mCapture->getHeight(); ++y) {
 			const Color8u* src = (const Color8u*)(srcImg.getData() + (y + 1)*srcImg.getRowBytes() - srcImg.getPixelInc());
-			Color8u* dst = (Color8u*)(mFlipped.getData() + y*mFlipped.getRowBytes());
-			for( int x = 0; x < mCapture.getWidth(); ++x ) {
+			Color8u* dst = (Color8u*)(mFlipped->getData() + y*mFlipped->getRowBytes());
+			for (int x = 0; x < mCapture->getWidth(); ++x) {
 				*dst = *src;
 				++dst;
 				--src;
@@ -200,7 +200,7 @@ void Fluid2DCamAppApp::update()
 		
 		// Create scaled image
 		if( ! mCurScaled  ) {
-			mCurScaled = Surface8u( mFlipped.getWidth()/kFlowScale, mFlipped.getHeight()/kFlowScale, mFlipped.hasAlpha(), mFlipped.getChannelOrder() );
+			mCurScaled = Surface8u(mFlipped->getWidth() / kFlowScale, mFlipped->getHeight() / kFlowScale, mFlipped->hasAlpha(), mFlipped->getChannelOrder());
 		}		
 		ip::resize( mFlipped, &mCurScaled );
 
@@ -219,13 +219,13 @@ void Fluid2DCamAppApp::update()
 
 				if( mFlow.data ) {
 					if( mFlowVectors.empty() ) {
-						mFlowVectors.resize( mCurScaled.getWidth()*mCurScaled.getHeight() );
+						mFlowVectors.resize(mCurScaled->getWidth()*mCurScaled->getHeight());
 					}
 					
 					//memset( &mFlowVectors[0], 0, mCurScaled.getWidth()*mCurScaled.getHeight()*sizeof( vec2 ) );
 					mNumActiveFlowVectors = 0;
-					for( int j = 0; j < mCurScaled.getHeight(); ++j ) {
-						for( int i = 0; i < mCurScaled.getWidth(); ++i ) {
+					for (int j = 0; j < mCurScaled->getHeight(); ++j) {
+						for (int i = 0; i < mCurScaled->getWidth(); ++i) {
 							const float* fptr = reinterpret_cast<float*>(mFlow.data + j*mFlow.step + i*sizeof(float)*2);
 							//
 							vec2 v = vec2( fptr[0], fptr[1] ); 
@@ -234,7 +234,7 @@ void Fluid2DCamAppApp::update()
 									mFlowVectors.push_back( std::make_pair( ivec2( i, j ), v ) );
 								}
 								else {
-									mFlowVectors[mNumActiveFlowVectors] = std::make_pair( Vec2i( i, j ), v );
+									mFlowVectors[mNumActiveFlowVectors] = std::make_pair( ivec2( i, j ), v );
 								}
 								++mNumActiveFlowVectors;
 							}
@@ -245,13 +245,13 @@ void Fluid2DCamAppApp::update()
 		}
 
 		// Update texture
-		mTexCam.update( mFlipped );
+		mTexCam->update(mFlipped);
 
 		// Save previous frame
 		if( ! mPrvScaled ) {
-			mPrvScaled = Surface8u( mCurScaled.getWidth(), mCurScaled.getHeight(), mCurScaled.hasAlpha(), mCurScaled.getChannelOrder() );
+			mPrvScaled = Surface8u::create(mCurScaled->getWidth(), mCurScaled->getHeight(), mCurScaled->hasAlpha(), mCurScaled->getChannelOrder());
 		}
-		memcpy( mPrvScaled.getData(), mCurScaled.getData(), mCurScaled.getHeight()*mCurScaled.getRowBytes() );
+		memcpy(mPrvScaled->getData(), mCurScaled->getData(), mCurScaled->getHeight()*mCurScaled->getRowBytes());
 	}
 
 	// Update fluid
@@ -268,8 +268,8 @@ void Fluid2DCamAppApp::update()
 	// Update velocity
 	const vec2* srcVel0 = mFluid2D.dbgVel0().data();
 	const vec2* srcVel1 = mFluid2D.dbgVel1().data();
-	Colorf* dstVel0 = (Colorf*)mSurfVel0.getData();
-	Colorf* dstVel1 = (Colorf*)mSurfVel1.getData();
+	Colorf* dstVel0 = (Colorf*)mSurfVel0->getData();
+	Colorf* dstVel1 = (Colorf*)mSurfVel1->getData();
 	for( int j = 0; j < mFluid2DResY; ++j ) {
 		for( int i = 0; i < mFluid2DResX; ++i ) {
 			*dstVel0 = Colorf( srcVel0->x, srcVel0->y, 0.0f );
@@ -282,29 +282,29 @@ void Fluid2DCamAppApp::update()
 	}
 	
 	// Update Density
-	mChanDen0 = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDen0().data() );
-	mChanDen1 = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDen1().data() );
+	mChanDen0 = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDen0().data() );
+	mChanDen1 = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDen1().data() );
 	
-	mTexDen0.update( mChanDen0 );
-	mTexDen1.update( mChanDen1 );
+	mTexDen0->update(mChanDen0);
+	mTexDen1->update(mChanDen1);
 	
 	// Update velocity textures
-	mTexVel0.update( mSurfVel0 );
-	mTexVel1.update( mSurfVel1 );
+	mTexVel0->update(mSurfVel0);
+	mTexVel1->update(mSurfVel1);
 	
 	// Update Divergence
-	mChanDiv = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDivergence().data() );
-	mTexDiv.update( mChanDiv );
+	mChanDiv = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgDivergence().data() );
+	mTexDiv->update(mChanDiv);
 
 	// Update Divergence
-	mChanPrs = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgPressure().data() );
-	mTexPrs.update( mChanPrs );
+	mChanPrs = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgPressure().data() );
+	mTexPrs->update(mChanPrs);
 
 	// Update Curl, Curl Length
-	mChanCurl = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgCurl().data() );
-	mTexCurl.update( mChanCurl );
-	mChanCurlLen = Channel32f( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgCurlLength().data() );
-	mTexCurlLen.update( mChanCurlLen );
+	mChanCurl = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgCurl().data() );
+	mTexCurl->update(mChanCurl);
+	mChanCurlLen = Channel32f::create( mFluid2DResX, mFluid2DResY, mFluid2DResX*sizeof(float), 1, mFluid2D.dbgCurlLength().data() );
+	mTexCurlLen->update(mChanCurlLen);
 }
 
 void Fluid2DCamAppApp::draw()
@@ -328,7 +328,7 @@ void Fluid2DCamAppApp::draw()
 	gl::draw( mTexCurl,    Rectf( 2*kDrawScale*mFluid2DResX, 2*kDrawScale*mFluid2DResY, 3*kDrawScale*mFluid2DResX, 4*kDrawScale*mFluid2DResY ) );
 	gl::draw( mTexCurlLen, Rectf( 3*kDrawScale*mFluid2DResX, 2*kDrawScale*mFluid2DResY, 4*kDrawScale*mFluid2DResX, 4*kDrawScale*mFluid2DResY ) );
 
-	mTexCurlLen.unbind();
+	mTexCurlLen->unbind();
 
 	gl::color( Color( 1, 0, 0 ) );
 	glLineWidth( 0.5f );
@@ -348,4 +348,4 @@ void Fluid2DCamAppApp::draw()
 	mParams.draw();
 }
 
-CINDER_APP_NATIVE( Fluid2DCamAppApp, RendererGl )
+CINDER_APP( Fluid2DCamAppApp, RendererGl )
