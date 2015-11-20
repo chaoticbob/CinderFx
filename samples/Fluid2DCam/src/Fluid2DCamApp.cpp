@@ -26,7 +26,7 @@ const float kDrawScale = 4;
 
 class Fluid2DCamAppApp : public ci::app::App {
 public:
-	void prepareSettings( ci::app::App::Settings *settings );
+	static void prepare(ci::app::App::Settings *settings);
 	void setup();
 	void mouseDown( ci::app::MouseEvent event );	
 	void mouseDrag( ci::app::MouseEvent event );
@@ -35,7 +35,7 @@ public:
 
 private:
 	ci::CaptureRef				mCapture;
-	ci::Surface8uRef			mFlipped;
+	//ci::Surface8uRef			mFlipped;
 	ci::gl::TextureRef			mTexCam;
 
 	ci::Surface8u				mPrvScaled, mCurScaled;
@@ -75,16 +75,16 @@ using namespace ci::app;
 using namespace cinderfx;
 using namespace std;
 
-void Fluid2DCamAppApp::prepareSettings( Settings *settings )
+void Fluid2DCamAppApp::prepare( Settings *settings )
 {
-	mFluid2DResX = 130;
-	mFluid2DResY = (int)(mFluid2DResX/1.3333333f + 0.5f);
-	settings->setWindowSize( (int)(4*kDrawScale*mFluid2DResX), (int)(3*kDrawScale*mFluid2DResY) );
-	settings->setFrameRate( 1000 );
 }
 
 void Fluid2DCamAppApp::setup()
 {
+	mFluid2DResX = 130;
+	mFluid2DResY = (int)(mFluid2DResX/1.3333333f + 0.5f);
+	setWindowSize( (int)(4*kDrawScale*mFluid2DResX), (int)(3*kDrawScale*mFluid2DResY) );
+	setFrameRate( 1000 );
 	glEnable( GL_TEXTURE_2D );
 	
 	mVelThreshold = 0.75f;
@@ -179,11 +179,11 @@ void Fluid2DCamAppApp::update()
 	
 	if (mCapture && mCapture->checkNewFrame()) {
 		if( ! mTexCam ) {
-			mTexCam = gl::Texture::create(*mCapture->getSurface());
+			mTexCam = gl::Texture::create(*mCapture->getSurface(), gl::Texture::Format().loadTopDown());
 		}
 
 		// Flip the image
-		if( ! mFlipped ) {
+		/*if( ! mFlipped ) {
 			Surface8uRef srcImg = mCapture->getSurface();
 			mFlipped = Surface8u::create(srcImg->getWidth(), srcImg->getHeight(), srcImg->hasAlpha(), srcImg->getChannelOrder());
 		}
@@ -197,13 +197,15 @@ void Fluid2DCamAppApp::update()
 				++dst;
 				--src;
 			} 
-		}
+		}*/
 		
 		// Create scaled image
 		if( ! &mCurScaled  ) {
-			mCurScaled = Surface8u(mFlipped->getWidth() / kFlowScale, mFlipped->getHeight() / kFlowScale, mFlipped->hasAlpha(), mFlipped->getChannelOrder());
-		}		
-		ip::resize(*mFlipped, &mCurScaled );
+			//mCurScaled = Surface8u(mFlipped->getWidth() / kFlowScale, mFlipped->getHeight() / kFlowScale, mFlipped->hasAlpha(), mFlipped->getChannelOrder());
+			mCurScaled = Surface8u(mTexCam->getWidth() / kFlowScale, mTexCam->getHeight() / kFlowScale, mTexCam->hasAlpha(), ImageIo::RGB);
+		}
+		//ip::resize(*mFlipped, &mCurScaled );
+		//ip::resize(mTexCam, &mCurScaled);
 
 		// Optical flow 
 		if( &mCurScaled && &mPrvScaled ) {
@@ -247,11 +249,12 @@ void Fluid2DCamAppApp::update()
 		}
 
 		// Update texture
-		mTexCam->update(*mFlipped);
+		//mTexCam->update(*mFlipped);
+		mTexCam->update(*mCapture->getSurface());
 
 		// Save previous frame
 		if( ! &mPrvScaled ) {
-			mPrvScaled = Surface8u(mCurScaled.getWidth(), mCurScaled.getHeight(), mCurScaled.hasAlpha(), mCurScaled.getChannelOrder());
+			mPrvScaled = Surface8u(mCurScaled.getWidth(), mCurScaled.getHeight(), mCurScaled.hasAlpha(), ImageIo::RGB);// mCurScaled.getChannelOrder());
 		}
 		memcpy(mPrvScaled.getData(), mCurScaled.getData(), mCurScaled.getHeight()*mCurScaled.getRowBytes());
 	}
@@ -352,4 +355,4 @@ void Fluid2DCamAppApp::draw()
 	mParams.draw();
 }
 
-CINDER_APP( Fluid2DCamAppApp, RendererGl )
+CINDER_APP(Fluid2DCamAppApp, RendererGl, &Fluid2DCamAppApp::prepare)
