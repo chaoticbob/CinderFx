@@ -94,7 +94,8 @@ void Fluid2DTextureApp::setup()
 	mParams.addParam( "Enable Buoyancy", mFluid2D.enableBuoyancyAddr() );
 	mParams.addParam( "Buoyancy Scale", mFluid2D.buoyancyScaleAddr(), "min=0 max=100 step=0.001" );
 	mParams.addParam( "Vorticity Scale", mFluid2D.vorticityScaleAddr(), "min=0 max=1 step=0.001" );
-	
+	mParams.hide();
+    
 	mTriMesh = ci::TriMesh::create( TriMesh::Format().positions(2).texCoords0(2) );
 
 	// Points and texture coordinates
@@ -221,7 +222,7 @@ void prepareSettings( Fluid2DTextureApp::Settings *settings )
 	settings->setWindowSize( 700, 700 );
    	settings->setResizable( false ); 
 	settings->setFrameRate( 1000 );
-	settings->setMultiTouchEnabled();
+	//settings->setMultiTouchEnabled();
 }
 
 CINDER_APP( Fluid2DTextureApp, RendererGl, prepareSettings )

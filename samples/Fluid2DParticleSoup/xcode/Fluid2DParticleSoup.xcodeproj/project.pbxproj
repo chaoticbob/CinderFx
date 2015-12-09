@@ -12,6 +12,8 @@
 		00BAE65A0E7ED9C10018A608 /* Fluid2DParticleSoupApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00BAE6590E7ED9C10018A608 /* Fluid2DParticleSoupApp.cpp */; };
 		00CCAF15116A9FEE008396D5 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 00CCAF14116A9FEE008396D5 /* CinderApp.icns */; };
 		2738B16A151DAA5500453457 /* ParticleSoup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2738B169151DAA5500453457 /* ParticleSoup.cpp */; };
+		27A47C231BFBF259002CFB4C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27A47C211BFBF259002CFB4C /* IOKit.framework */; };
+		27A47C241BFBF259002CFB4C /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27A47C221BFBF259002CFB4C /* IOSurface.framework */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -40,6 +42,8 @@
 		2738B167151DAA1D00453457 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Grid.h; path = ../../../src/cinderfx/Grid.h; sourceTree = "<group>"; };
 		2738B169151DAA5500453457 /* ParticleSoup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSoup.cpp; path = ../src/ParticleSoup.cpp; sourceTree = "<group>"; };
 		2738B16B151DAA6000453457 /* ParticleSoup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleSoup.h; path = ../src/ParticleSoup.h; sourceTree = "<group>"; };
+		27A47C211BFBF259002CFB4C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		27A47C221BFBF259002CFB4C /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/IOSurface.framework; sourceTree = DEVELOPER_DIR; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Fluid2DParticleSoup_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fluid2DParticleSoup_Prefix.pch; sourceTree = "<group>"; };
@@ -61,6 +65,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27A47C231BFBF259002CFB4C /* IOKit.framework in Frameworks */,
+				27A47C241BFBF259002CFB4C /* IOSurface.framework in Frameworks */,
 				B37DC0E019EE87CF00FD26A8 /* CoreAudio.framework in Frameworks */,
 				B37DC0DE19EE87C800FD26A8 /* AudioUnit.framework in Frameworks */,
 				B37DC0DC19EE87C200FD26A8 /* AudioToolbox.framework in Frameworks */,
@@ -174,6 +180,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				27A47C211BFBF259002CFB4C /* IOKit.framework */,
+				27A47C221BFBF259002CFB4C /* IOSurface.framework */,
 				B37DC0DF19EE87CF00FD26A8 /* CoreAudio.framework */,
 				B37DC0DD19EE87C800FD26A8 /* AudioUnit.framework */,
 				B37DC0DB19EE87C200FD26A8 /* AudioToolbox.framework */,
@@ -259,6 +267,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = x86_64;
+				CINDER_PATH = ../../../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
@@ -270,6 +279,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fluid2DParticleSoup_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -280,7 +290,7 @@
 				PRODUCT_NAME = Fluid2DParticleSoup;
 				SDKROOT = macosx;
 				SYMROOT = ./build;
-				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../src";
+				USER_HEADER_SEARCH_PATHS = "../include ../../../src";
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
@@ -290,6 +300,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = x86_64;
+				CINDER_PATH = ../../../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				DEAD_CODE_STRIPPING = YES;
@@ -298,10 +309,11 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fluid2DParticleSoup_Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -313,7 +325,7 @@
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = ./build;
-				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../src";
+				USER_HEADER_SEARCH_PATHS = "../include ../../../src";
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};

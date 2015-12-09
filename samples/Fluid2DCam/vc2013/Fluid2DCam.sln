@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fluid2DCam", "Fluid2DCam.vcxproj", "{EC51BE75-35B5-459A-B99F-703301B8495D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC51BE75-35B5-459A-B99F-703301B8495D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC51BE75-35B5-459A-B99F-703301B8495D}.Debug|Win32.Build.0 = Debug|Win32
+		{EC51BE75-35B5-459A-B99F-703301B8495D}.Release|Win32.ActiveCfg = Release|Win32
+		{EC51BE75-35B5-459A-B99F-703301B8495D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

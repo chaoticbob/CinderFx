@@ -84,7 +84,8 @@ void Fluid2DParticleSoupApp::setup()
 	mParams.addParam( "Enable Buoyancy", mFluid2D.enableBuoyancyAddr() );
 	mParams.addParam( "Buoyancy Scale", mFluid2D.buoyancyScaleAddr(), "min=0 max=100 step=0.001" );
 	mParams.addParam( "Vorticity Scale", mFluid2D.vorticityScaleAddr(), "min=0 max=1 step=0.001" );
-	
+	mParams.hide();
+    
 	mFluid2D.setRgbDissipation( 0.9930f );
 	mFluid2D.enableDensity();
 	mFluid2D.enableRgb();
@@ -181,7 +182,7 @@ void Fluid2DParticleSoupApp::draw()
 	*/
 
 	mParticleSoup.draw();
-	mParams.draw();	
+	mParams.draw();
 }
 
 void prepareSettings( Fluid2DParticleSoupApp::Settings *settings )
@@ -189,7 +190,7 @@ void prepareSettings( Fluid2DParticleSoupApp::Settings *settings )
 	settings->setWindowSize( 700, 700 );
    	settings->setResizable( false ); 
 	settings->setFrameRate( 1000 );
-	settings->setMultiTouchEnabled();
+	//settings->setMultiTouchEnabled();
 }
 
 CINDER_APP( Fluid2DParticleSoupApp, RendererGl, prepareSettings )

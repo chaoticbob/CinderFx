@@ -91,6 +91,7 @@ void Fluid2DParticlesApp::setup()
 	mParams.addParam( "Enable Buoyancy", mFluid2D.enableBuoyancyAddr() );
 	mParams.addParam( "Buoyancy Scale", mFluid2D.buoyancyScaleAddr(), "min=0 max=100 step=0.001" );
 	mParams.addParam( "Vorticity Scale", mFluid2D.vorticityScaleAddr(), "min=0 max=1 step=0.001" );
+    mParams.hide();
 
 	mFluid2D.setDt( 0.1f );
 	mFluid2D.enableDensity();
@@ -222,7 +223,7 @@ void prepareSettings( Fluid2DParticlesApp::Settings *settings )
    	settings->setResizable( false ); 
 	settings->setResizable( false );     
 	settings->setFrameRate( 1000 );
-	settings->setMultiTouchEnabled();
+	//settings->setMultiTouchEnabled();
 }
 
 CINDER_APP( Fluid2DParticlesApp, RendererGl, prepareSettings )
