@@ -181,7 +181,7 @@ void Fluid2DParticleSoupApp::draw()
 	*/
 
 	mParticleSoup.draw();
-//	mParams.draw();	
+	mParams.draw();	
 }
 
 void prepareSettings( Fluid2DParticleSoupApp::Settings *settings )
